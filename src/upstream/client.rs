@@ -1,14 +1,12 @@
-use std::future::pending;
 use std::sync::atomic::{AtomicU16, AtomicUsize, Ordering};
-use std::{net::SocketAddr, sync::mpsc::channel};
+use std::net::SocketAddr;
 use std::sync::Arc;
 
-use bytes::{Bytes, BytesMut, BufMut};
+use bytes::{Bytes, BytesMut};
 use dashmap::DashMap;
-use smallvec::SmallVec;
 use socket2::{Domain, Protocol, Socket, Type};
 use tokio::sync::Semaphore;
-use tokio::{net::UdpSocket, sync::{mpsc, oneshot}};
+use tokio::{net::UdpSocket, sync::oneshot};
 
 use crate::{Result, dns::HEADER_SIZE};
 

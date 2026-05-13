@@ -37,7 +37,7 @@ impl FlightGroup {
             F: FnOnce() -> Fut,
             Fut: std::future::Future<Output = bool>,
     {
-        // 第一步：快速进行锁操作并立即释放锁，绝对不在持有锁期间进行 .await
+        // 快速进行锁操作并立即释放锁，绝对不在持有锁期间进行 .await
         let (mut rx, is_leader, tx) = {
             if let Some(sender_ref) = self.flights.get(&key) {
                 (sender_ref.value().clone(), false, None)

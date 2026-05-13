@@ -1,8 +1,8 @@
 use std::{io::IoSlice, net::SocketAddr, os::fd::AsRawFd, sync::Arc};
 
 use bytes::BytesMut;
-use nix::sys::socket::{MsgFlags, SockaddrIn, SockaddrIn6, sendmsg};
-use socket2::{Domain, Protocol, SockAddr, Socket, Type};
+use nix::sys::socket::{MsgFlags, SockaddrIn, sendmsg};
+use socket2::{Domain, Protocol, Socket, Type};
 use tokio::net::UdpSocket;
 
 use crate::processor::Processor;
@@ -38,7 +38,7 @@ impl Server {
     pub async fn run(&self) -> anyhow::Result<()>{
         let mut handles = vec![];
 
-        for i in 0..self.worker_threads {
+        for _ in 0..self.worker_threads {
             let processor = self.processor.clone();
             let listen_addr = self.listen_addr;
 
@@ -103,6 +103,7 @@ impl Server {
 
             
         }
+
 
         for h in handles {
             let _ = h.await;

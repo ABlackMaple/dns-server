@@ -1,6 +1,6 @@
-use std::{collections::HashMap, process::id, sync::{Arc, RwLock, atomic::Ordering}, time::Instant};
+use std::{collections::HashMap, sync::{Arc, RwLock, atomic::Ordering}, time::Instant};
 
-use rand::{RngExt, rngs::ThreadRng, seq::index};
+use rand::{RngExt, rngs::ThreadRng};
 
 use crate::cache::{CacheStore, CachedTail};
 
@@ -89,6 +89,7 @@ impl CacheShard {
         let mut victim_idx = None;
         for &idx in &data.sample_buffer {
             if let Some((entry, _)) = data.map.get(&data.keys[idx]) {
+                entry.force_attenuation();
                 let hits = entry.hits.load(Ordering::Relaxed);
                 if hits < min_hits {
                     min_hits = hits;

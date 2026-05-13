@@ -1,9 +1,9 @@
-use std::{collections::HashMap, hash::Hash, net::SocketAddr, sync::Arc};
+use std::{collections::HashMap, net::SocketAddr, sync::Arc};
 
 use bytes::Bytes;
 use tokio::sync::RwLock;
 
-use crate::upstream::{self, client::UpstreamClient, trie::DomainRouter};
+use crate::upstream::{client::UpstreamClient, trie::DomainRouter};
 
 mod trie;
 mod client;

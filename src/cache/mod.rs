@@ -1,4 +1,3 @@
-use core::time;
 use std::{sync::{Arc, atomic::{AtomicU64, AtomicUsize, Ordering}}, time::{Duration, SystemTime, UNIX_EPOCH}};
 
 use bytes::Bytes;
@@ -7,7 +6,7 @@ use std::time::Instant;
 use crate::dns::{OFF_ANCOUNT, OFF_ARCOUNT, OFF_NSCOUNT, parser::find_ttl_offsets};
 
 pub mod fast_db;
-mod purge;
+pub mod purge;
 mod hosts;
 
 #[inline]
@@ -33,7 +32,7 @@ pub struct CachedTail {
 }
 
 impl CachedTail {
-    pub fn new(mut buf: Bytes, tail_start: usize, q_len: u16) -> Self {
+    pub fn new(buf: Bytes, tail_start: usize, q_len: u16) -> Self {
         let ttl_offsets = find_ttl_offsets(&buf, tail_start).unwrap();
 
         // let tail_bytes = buf.split_off(tail_start);
@@ -63,19 +62,24 @@ impl CachedTail {
     }
 
     pub fn record_access(&self) {
+        self.force_attenuation();
+        self.hits.fetch_add(1, Ordering::Relaxed);
+    }
+
+    #[inline]
+    pub fn force_attenuation(&self) {
         let now = now_sec();
         let last = self.last_accessed_sec.load(Ordering::Relaxed);
-
+        
         if last < now {
             let elapsed = (now - last) / 60;
             if elapsed > 0 {
                 let cur_hits = self.hits.load(Ordering::Relaxed);
-                let decayed_hits = cur_hits >> elapsed.min(31);
-                self.hits.store(decayed_hits, Ordering::Relaxed);
+                let decayed_hist = cur_hits >> elapsed.min(31);
+                self.hits.store(decayed_hist, Ordering::Relaxed);
                 self.last_accessed_sec.store(now, Ordering::Relaxed);
             }
         }
-        self.hits.fetch_add(1, Ordering::Relaxed);
     }
 }
 

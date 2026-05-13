@@ -55,7 +55,6 @@ fn main() -> anyhow::Result<()> {
 
         println!("🎧 正在监听端口: {}", listen_addr);
 
-        // 6. 运行并处理优雅退出
         // 监听 Ctrl+C 或其他终止信号
         tokio::select! {
             res = server.run() => {

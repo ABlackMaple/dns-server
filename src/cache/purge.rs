@@ -2,7 +2,7 @@ use std::{sync::Arc, time::Duration};
 
 use tokio::{sync::mpsc, time::interval};
 
-use crate::{cache::{CacheStore, fast_db::ShardedLfuDb}, shutdown::{self, Shutdown}};
+use crate::{cache::{CacheStore, fast_db::ShardedLfuDb}, shutdown::Shutdown};
 
 
 pub async fn run_purge_task(db: Arc<ShardedLfuDb>, mut shutdown: Shutdown, _shutdown_complete: mpsc::Sender<()>) {
