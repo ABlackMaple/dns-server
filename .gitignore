@@ -1,0 +1,6 @@
+/target
+hosts
+Cargo.lock
+
+awk.sh
+
